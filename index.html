@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Gather</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -12,6 +13,7 @@
             --panel-bg: rgba(25, 26, 32, 0.75);
             --panel-hover: rgba(35, 37, 46, 0.85);
             --accent-color: #e50914; /* Red accent */
+            --accent-dark: #b20710;
             --text-primary: #ffffff;
             --text-secondary: #9ca3af;
             --star-color: #f5c518;
@@ -388,16 +390,17 @@
             gap: 16px;
         }
 
+        /* Movie Card & Animated Hover Details */
         .media-card {
             display: flex;
             flex-direction: column;
-            gap: 8px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
         }
 
         .media-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
         }
 
         .poster-wrapper {
@@ -408,6 +411,12 @@
             overflow: hidden;
             background: #16181e;
             border: 1px solid var(--border-color);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .media-card:hover .poster-wrapper {
+            border-color: rgba(229, 9, 20, 0.4);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.7);
         }
 
         .poster-wrapper img {
@@ -415,34 +424,89 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        .media-title {
-            font-size: 0.85rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+        .media-card:hover .poster-wrapper img {
+            transform: scale(1.08);
         }
 
-        .media-meta {
+        /* Shadow Gradient & Details Coming Up From Bottom */
+        .hover-details-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(0deg, rgba(13, 14, 18, 0.95) 0%, rgba(13, 14, 18, 0.7) 50%, rgba(0, 0, 0, 0) 100%);
             display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 14px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            z-index: 3;
         }
 
-        .media-meta span {
+        .media-card:hover .hover-details-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .hover-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+            line-height: 1.25;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .hover-rating {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
-        .media-meta i.fa-star {
+        .hover-rating i {
             color: var(--star-color);
         }
 
-        /* Watch Container Layout (Fully Responsive Single Column) */
+        /* Top 10 Corner Banner Ribbon Tag */
+        .top10-banner {
+            position: absolute;
+            top: 10px;
+            left: -4px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-dark) 100%);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 4px 10px 4px 8px;
+            border-radius: 0 6px 6px 0;
+            box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.6);
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1;
+        }
+
+        .top10-banner::before {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            border-top: 4px solid #660000;
+            border-left: 4px solid transparent;
+        }
+
+        /* Watch Container Layout */
         .watch-container {
             display: none;
             max-width: 1200px;
@@ -520,7 +584,7 @@
             border: none;
         }
 
-        /* Clean Video Info Section (Only Name & Description) */
+        /* Video Info Section */
         .video-info-section {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
@@ -563,7 +627,7 @@
             background: var(--panel-hover);
         }
 
-        /* Screen Breakpoints for Absolute Responsiveness */
+        /* Responsive Breakpoints */
         @media (max-width: 900px) {
             header {
                 padding: 14px 20px;
@@ -605,12 +669,12 @@
 
     <header id="mainHeader">
         <div class="logo-container">
-            <div class="logo" onclick="returnToHome()">netflix</div>
+            <div class="logo" onclick="returnToHome()">net-flix</div>
         </div>
         <nav>
             <ul>
                 <li><a class="nav-tab active" data-tab="board">Board</a></li>
-                <li><a class="nav-tab" data-tab="new">New</a></li>
+                <li><a class="nav-tab" data-tab="new">Top 10</a></li>
                 <li><a class="nav-tab" data-tab="movies">Movies</a></li>
                 <li><a class="nav-tab" data-tab="series">Series</a></li>
             </ul>
@@ -652,6 +716,17 @@
 
             <div class="content-row-container">
                 <div class="section-header">
+                    <h3>Top 10 Today</h3>
+                    <div class="nav-arrows">
+                        <button class="arrow-btn" onclick="scrollGrid('topTenGrid', -300)"><i class="fa-solid fa-chevron-left"></i></button>
+                        <button class="arrow-btn" onclick="scrollGrid('topTenGrid', 300)"><i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <div class="media-grid" id="topTenGrid"></div>
+            </div>
+
+            <div class="content-row-container">
+                <div class="section-header">
                     <h3>Trending</h3>
                     <div class="nav-arrows">
                         <button class="arrow-btn" onclick="scrollGrid('trendingGrid', -300)"><i class="fa-solid fa-chevron-left"></i></button>
@@ -659,17 +734,6 @@
                     </div>
                 </div>
                 <div class="media-grid" id="trendingGrid"></div>
-            </div>
-
-            <div class="content-row-container">
-                <div class="section-header">
-                    <h3>New Releases</h3>
-                    <div class="nav-arrows">
-                        <button class="arrow-btn" onclick="scrollGrid('newGrid', -300)"><i class="fa-solid fa-chevron-left"></i></button>
-                        <button class="arrow-btn" onclick="scrollGrid('newGrid', 300)"><i class="fa-solid fa-chevron-right"></i></button>
-                    </div>
-                </div>
-                <div class="media-grid" id="newGrid"></div>
             </div>
         </div>
     </div>
@@ -712,7 +776,7 @@
 
         let heroBanners = [];
         let trendingData = [];
-        let newData = [];
+        let topTenData = [];
 
         let currentHeroIndex = 0;
         let activeTab = "board";
@@ -736,7 +800,7 @@
         const heroViews = document.getElementById("heroViews");
         const heroRating = document.getElementById("heroRating");
         const trendingGrid = document.getElementById("trendingGrid");
-        const newGrid = document.getElementById("newGrid");
+        const topTenGrid = document.getElementById("topTenGrid");
         const searchInput = document.getElementById("searchInput");
         const searchDropdown = document.getElementById("searchDropdown");
         const playHeroBtn = document.getElementById("playHeroBtn");
@@ -763,9 +827,9 @@
                     }))
                     .filter(item => item.original_language !== 'ja'); 
 
+                topTenData = allItems.slice(0, 10);
                 trendingData = allItems.filter(i => i.backdrop !== '');
                 heroBanners = trendingData.slice(0, 5);
-                newData = [...allItems].reverse();
 
                 initHeroIndicators();
                 updateHeroBanner();
@@ -811,29 +875,39 @@
 
         function renderGrids() {
             let filteredTrending = trendingData;
-            let filteredNew = newData;
+            let filteredTopTen = topTenData;
 
             if (activeTab === "movies") {
                 filteredTrending = filteredTrending.filter(item => item.type === "movie");
-                filteredNew = filteredNew.filter(item => item.type === "movie");
+                filteredTopTen = filteredTopTen.filter(item => item.type === "movie");
             } else if (activeTab === "series") {
                 filteredTrending = filteredTrending.filter(item => item.type === "tv");
-                filteredNew = filteredNew.filter(item => item.type === "tv");
+                filteredTopTen = filteredTopTen.filter(item => item.type === "tv");
             }
 
-            trendingGrid.innerHTML = filteredTrending.length ? filteredTrending.map(cardHtml).join('') : '<p style="color:var(--text-secondary)">No results found.</p>';
-            newGrid.innerHTML = filteredNew.length ? filteredNew.map(cardHtml).join('') : '<p style="color:var(--text-secondary)">No results found.</p>';
+            topTenGrid.innerHTML = filteredTopTen.length 
+                ? filteredTopTen.map((item, index) => cardHtml(item, index + 1)).join('') 
+                : '<p style="color:var(--text-secondary)">No results found.</p>';
+
+            trendingGrid.innerHTML = filteredTrending.length 
+                ? filteredTrending.map(item => cardHtml(item)).join('') 
+                : '<p style="color:var(--text-secondary)">No results found.</p>';
         }
 
-        function cardHtml(item) {
+        function cardHtml(item, rank = null) {
+            const bannerBadge = rank 
+                ? `<div class="top10-banner"><i class="fa-solid fa-fire"></i> TOP 10 • #${rank}</div>` 
+                : '';
+
             return `
                 <div class="media-card" onclick="openPlayer(${item.id}, '${item.title.replace(/'/g, "\\'")}', '${item.type}', '${item.overview.replace(/'/g, "\\'")}')">
                     <div class="poster-wrapper">
+                        ${bannerBadge}
                         <img src="${item.poster}" alt="${item.title}" loading="lazy">
-                    </div>
-                    <div class="media-title">${item.title}</div>
-                    <div class="media-meta">
-                        <span><i class="fa-solid fa-star"></i> ${item.rating} IMDb</span>
+                        <div class="hover-details-overlay">
+                            <div class="hover-title">${item.title}</div>
+                            <div class="hover-rating"><i class="fa-solid fa-star"></i> ${item.rating} IMDb</div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -899,7 +973,7 @@
             const matches = await searchTMDB(query);
 
             if (matches.length > 0) {
-                searchGrid.innerHTML = matches.map(cardHtml).join('');
+                searchGrid.innerHTML = matches.map(item => cardHtml(item)).join('');
             } else {
                 searchGrid.innerHTML = '<p style="color:var(--text-secondary)">No results found.</p>';
             }
@@ -1011,8 +1085,6 @@
                 default :
                     embedUrl = type === 'tv' ? `https://streamrip.fun/play?type=tv&id=${id}&s=1&ep=1` : `https://streamrip.fun/play?type=movie&id=${id}`;
                     break;
-                case 'vidsrc':
-                    embedUrl = `https://vidsrc.to/embed/movie/${id}`;
             }
 
             videoPlayerFrame.src = embedUrl;
